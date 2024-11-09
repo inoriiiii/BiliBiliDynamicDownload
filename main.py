@@ -36,13 +36,15 @@ def dict2urls(data: dict):
 
 async def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('uid', nargs=1)
+    parser.add_argument('uid', type=int)
     parser.add_argument('--path', default='pics')
     args = parser.parse_args()
     u = user.User(uid=args.uid)
-    path = os.path.join(args.path, args.uid)
+    path = os.path.join(args.path, str(args.uid))
+
     os.makedirs(path, exist_ok=True)
     offset = ""
+    print("----downloading----")
     while True:
         res = await u.get_dynamics_new(offset)
         # with open(offset+".yaml", 'w', encoding='utf8') as f:
@@ -63,9 +65,10 @@ async def main():
                  for url in failed]
         await asyncio.gather(*tasks)
     print("----donwnload finish----")
-    print("----failed----")
-    for url in failed:
-        print(url)
+    if failed:
+        print("----failed----")
+        for url in failed:
+            print(url)
 
 
 if __name__ == "__main__":
